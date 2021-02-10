@@ -1,9 +1,14 @@
 package com.time.demo.properties;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@ConfigurationProperties
+@Builder
+@EqualsAndHashCode
+@Getter
 public class Schedule {
-    java.util.Date
     private int dayOfTheWeek;
+    private int from;
+    private int to;
 }
