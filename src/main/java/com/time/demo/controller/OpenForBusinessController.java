@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 @RestController
 @Profile("default")
@@ -27,15 +29,15 @@ public class OpenForBusinessController {
     public Response isOpenForBusiness() {
         log.info("Using log with date");
         //No puedes hacer pruebas unitarias
-        Date currenDate = new Date();
+        Calendar currenDate = new GregorianCalendar();
         Schedule[] schedules = scheduleService.getSchedules();
 
         for (Schedule schedule:
              schedules) {
             //Usa métodos deprecados en la versión 1.1
-            if (currenDate.getDay() == schedule.getDayOfTheWeek() &&
-                    currenDate.getHours() >= schedule.getFrom() &&
-                    currenDate.getHours() <= schedule.getTo())
+            if (currenDate.get(Calendar.DAY_OF_WEEK) == schedule.getDayOfTheWeek() &&
+                    currenDate.get(Calendar.HOUR) >= schedule.getFrom() &&
+                    currenDate.get(Calendar.HOUR) <= schedule.getTo())
                 return new Response(true);
         }
         return new Response(false);
