@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 @RestController
 @Profile("default")
 @Log4j2
@@ -20,10 +22,22 @@ public class OpenForBusinessController {
     public void setScheduleService(ScheduleService scheduleService) {
         this.scheduleService = scheduleService;
     }
+
     @GetMapping(path = "/is-open-for-business")
     public Response isOpenForBusiness() {
         log.info("Using log with date");
+        //No puedes hacer pruebas unitarias
+        Date currenDate = new Date();
         Schedule[] schedules = scheduleService.getSchedules();
-        return new Response(true);
+
+        for (Schedule schedule:
+             schedules) {
+            //Usa métodos deprecados en la versión 1.1
+            if (currenDate.getDay() == schedule.getDayOfTheWeek() &&
+                    currenDate.getHours() >= schedule.getFrom() &&
+                    currenDate.getHours() <= schedule.getTo())
+                return new Response(true);
+        }
+        return new Response(false);
     }
 }
