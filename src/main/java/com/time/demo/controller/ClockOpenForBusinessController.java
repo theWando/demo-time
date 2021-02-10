@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 
 @RestController
 @Profile("clock")
@@ -34,8 +37,18 @@ public class ClockOpenForBusinessController {
     @GetMapping(path = "/is-open-for-business")
     public Response isOpenForBusiness() {
         log.info("Using log with clock");
+        //permite pruebas
+        LocalDateTime currentTime = LocalDateTime.now(clock);
         Schedule[] schedules = scheduleService.getSchedules();
 
-        return new Response(true);
+        for (Schedule schedule :
+                schedules) {
+            //Sin métodos deprecados
+            if (currentTime.get(ChronoField.DAY_OF_WEEK) == schedule.getDayOfTheWeek() &&
+            currentTime.get(ChronoField.HOUR_OF_DAY) >= schedule.getFrom() &&
+            currentTime.get(ChronoField.HOUR_OF_DAY) <= schedule.getTo())
+                return new Response(true);
+        }
+        return new Response(false);
     }
 }
